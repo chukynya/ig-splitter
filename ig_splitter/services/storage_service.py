@@ -4,7 +4,7 @@ import io
 import uuid
 from datetime import datetime
 from pathlib import Path
-from zipfile import ZIP_DEFLATED, ZipFile
+from zipfile import ZIP_STORED, ZipFile
 
 from PIL import Image
 from werkzeug.datastructures import FileStorage
@@ -25,8 +25,20 @@ def read_uploaded_image(upload: FileStorage) -> Image.Image:
 
 def save_original(source: Image.Image, run_dir: Path, original_name: str) -> str:
     base_name = Path(secure_filename(original_name) or "upload").stem
-    uploaded_name = f"uploaded_{base_name}.png"
-    source.convert("RGB").save(run_dir / uploaded_name, format="PNG", optimize=True)
+    ext = (Path(original_name).suffix or ".png").lower()
+    uploaded_name = f"uploaded_{base_name}{ext}"
+    image_format = source.format or ext.lstrip(".").upper()
+    source.save(run_dir / uploaded_name, format=image_format)
+    return uploaded_name
+
+
+def save_original_upload_bytes(upload: FileStorage, run_dir: Path, original_name: str) -> str:
+    safe_name = secure_filename(original_name) or "upload"
+    uploaded_name = f"uploaded_{safe_name}"
+
+    upload.stream.seek(0)
+    (run_dir / uploaded_name).write_bytes(upload.stream.read())
+    upload.stream.seek(0)
     return uploaded_name
 
 
@@ -52,7 +64,7 @@ def save_tiles(tiles: list[Image.Image], run_dir: Path, rows: int, cols: int, sp
 
 def create_zip(run_dir: Path, tile_names: list[str], zip_name: str = "instagram_tiles.zip") -> str:
     zip_path = run_dir / zip_name
-    with ZipFile(zip_path, "w", compression=ZIP_DEFLATED) as zip_file:
+    with ZipFile(zip_path, "w", compression=ZIP_STORED) as zip_file:
         for tile_name in tile_names:
             zip_file.write(run_dir / tile_name, arcname=tile_name)
     return zip_name

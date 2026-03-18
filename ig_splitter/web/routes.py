@@ -24,7 +24,7 @@ from ig_splitter.services.storage_service import (
     make_run_dir,
     read_uploaded_image,
     sanitize_and_filter_tile_names,
-    save_original,
+    save_original_upload_bytes,
     save_tiles,
     selected_zip_name,
 )
@@ -95,7 +95,7 @@ def process_image():
     run_dir = make_run_dir(RUNS_DIR)
     run_id = run_dir.name
 
-    uploaded_name = save_original(source, run_dir, filename)
+    uploaded_name = save_original_upload_bytes(file, run_dir, filename)
     tiles = split_image(source, resolved_rows, resolved_cols)
     tile_names = save_tiles(tiles, run_dir, resolved_rows, resolved_cols, options.split_mode)
     zip_name = create_zip(run_dir, tile_names)

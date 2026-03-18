@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import io
 from pathlib import Path
+from zipfile import ZIP_STORED, ZipFile
 
 from PIL import Image
 from werkzeug.datastructures import FileStorage
@@ -12,6 +13,7 @@ from ig_splitter.services.storage_service import (
     read_uploaded_image,
     sanitize_and_filter_tile_names,
     save_original,
+    save_original_upload_bytes,
     save_tiles,
     selected_zip_name,
     tile_filename,
@@ -44,6 +46,16 @@ def test_save_original(tmp_path: Path) -> None:
     assert (tmp_path / uploaded_name).exists()
 
 
+def test_save_original_upload_bytes_preserves_payload(tmp_path: Path) -> None:
+    payload = b"raw-image-payload"
+    upload = FileStorage(stream=io.BytesIO(payload), filename="input file.png", content_type="image/png")
+
+    uploaded_name = save_original_upload_bytes(upload, tmp_path, "input file.png")
+
+    assert uploaded_name == "uploaded_input_file.png"
+    assert (tmp_path / uploaded_name).read_bytes() == payload
+
+
 def test_tile_filename_for_modes() -> None:
     assert tile_filename(0, rows=2, cols=3, split_mode="both") == "tile_r1_c1.png"
     assert tile_filename(2, rows=1, cols=3, split_mode="vertical") == "tile_v3.png"
@@ -57,7 +69,11 @@ def test_save_tiles_and_create_zip(tmp_path: Path) -> None:
     assert all((tmp_path / name).exists() for name in names)
 
     zip_name = create_zip(tmp_path, names)
-    assert (tmp_path / zip_name).exists()
+    zip_path = tmp_path / zip_name
+    assert zip_path.exists()
+
+    with ZipFile(zip_path) as zip_file:
+        assert all(item.compress_type == ZIP_STORED for item in zip_file.infolist())
 
 
 def test_sanitize_and_filter_tile_names(tmp_path: Path) -> None:

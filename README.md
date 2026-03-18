@@ -170,5 +170,6 @@ python app.py
 
 - Supported image formats: PNG, JPG, JPEG, WEBP
 - Split tiles are exported as PNG for better quality retention
-- Max upload size: 20 MB
+- Upload size is not limited by app config
+- ZIP downloads store files without deflate compression
 - Generated output is saved in `runs/`
