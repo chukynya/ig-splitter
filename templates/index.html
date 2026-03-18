@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Instagram Splitter</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Sora:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <p class="kicker">Local Fullstack Python App</p>
+      <h1>Instagram Splitter</h1>
+      <p class="sub">
+        Upload one image, preview split lines, then download all tiles or only selected tiles.
+      </p>
+    </section>
+
+    <section class="panel">
+      <form class="upload-form" action="/process" method="post" enctype="multipart/form-data">
+        <div class="field full-width">
+          <label for="image">Image</label>
+          <input id="image" name="image" type="file" accept="image/png,image/jpeg,image/webp" required>
+        </div>
+
+        <div class="field">
+          <label for="split_mode">Split Option</label>
+          <select id="split_mode" name="split_mode">
+            <option value="both" selected>Both (Grid)</option>
+            <option value="vertical">Vertically</option>
+            <option value="horizontal">Horizontally</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="rows">Rows</label>
+          <input id="rows" name="rows" type="number" min="1" max="10" value="3">
+        </div>
+
+        <div class="field">
+          <label for="cols">Columns</label>
+          <input id="cols" name="cols" type="number" min="1" max="10" value="3">
+        </div>
+
+        <div class="field full-width">
+          <label>Download Option</label>
+          <div class="inline-options">
+            <label><input type="radio" name="download_mode" value="zip" checked> Get all in one ZIP</label>
+            <label><input type="radio" name="download_mode" value="nozip"> Keep tiles as separate files</label>
+          </div>
+        </div>
+
+        <button class="cta" type="submit">Split Image</button>
+      </form>
+
+      <section id="livePreview" class="live-preview" hidden>
+        <div class="live-preview-header">
+          <h2>Live Preview</h2>
+          <p id="livePreviewMeta" class="muted-note">Rows 3, Cols 3</p>
+        </div>
+        <div class="live-canvas-wrap">
+          <canvas id="liveCanvas" aria-label="Live image preview"></canvas>
+          <div id="liveLines" class="split-lines" aria-hidden="true"></div>
+        </div>
+      </section>
+
+      {% if error %}
+      <p class="error">{{ error }}</p>
+      {% endif %}
+    </section>
+
+    {% if result %}
+    <section class="results">
+      <div class="result-header">
+        <h2>Results</h2>
+        <p class="mode-badge">Mode: {{ result.split_mode_label }}</p>
+      </div>
+
+      <div class="download-row">
+        <a class="download" href="/runs/{{ result.run_id }}/{{ result.zip_name }}?download=1" download>Download All ZIP ({{ result.count }} tiles)</a>
+      </div>
+
+      <div class="comparison">
+        <article>
+          <h3>Original</h3>
+          <img src="/runs/{{ result.run_id }}/{{ result.uploaded_name }}" alt="Uploaded image">
+        </article>
+
+        <article>
+          <h3>Split Preview</h3>
+          <div class="preview-wrap">
+            <img src="/runs/{{ result.run_id }}/{{ result.uploaded_name }}" alt="Split guide preview">
+            <div class="split-lines" aria-hidden="true">
+              {% for line in vertical_lines %}
+              <span class="line-v" style="--line-pos: {{ line }};"></span>
+              {% endfor %}
+              {% for line in horizontal_lines %}
+              <span class="line-h" style="--line-pos: {{ line }};"></span>
+              {% endfor %}
+            </div>
+          </div>
+          <p class="muted-note">Split line preview</p>
+        </article>
+      </div>
+
+      <div class="tiles-header">
+        <h3>Split Tiles ({{ result.rows }} x {{ result.cols }})</h3>
+        <div class="tile-actions">
+          <button type="button" id="selectAllBtn">Select All</button>
+          <button type="button" id="clearAllBtn">Clear</button>
+        </div>
+      </div>
+
+      <form id="selectedZipForm" action="/download-selected-zip" method="post">
+        <input type="hidden" name="run_id" value="{{ result.run_id }}">
+        <div class="tiles" style="--cols: {{ result.cols }};">
+          {% for tile_name in result.tile_names %}
+          <label class="tile-card">
+            <input type="checkbox" name="tile" value="{{ tile_name }}" class="tile-check">
+            <img src="/runs/{{ result.run_id }}/{{ tile_name }}" alt="Tile {{ loop.index }}">
+            <span class="tile-meta">{{ tile_name }}</span>
+            <a class="tiny-download" href="/runs/{{ result.run_id }}/{{ tile_name }}?download=1" download>Download</a>
+          </label>
+          {% endfor %}
+        </div>
+
+        <div class="download-row">
+          <button type="submit" class="cta alt">Download Selected as ZIP</button>
+          {% if result.download_mode == "nozip" %}
+          <p class="muted-note">You selected separate files mode. Use each tile Download button, or use selected ZIP for convenience.</p>
+          {% else %}
+          <p class="muted-note">You selected one ZIP mode. Use Download All ZIP or build a custom selected ZIP.</p>
+          {% endif %}
+        </div>
+      </form>
+    </section>
+    {% endif %}
+
+    <section class="tutorial panel">
+      <h2>Tutorial: How To Split</h2>
+      <ol>
+        <li>Upload a PNG, JPG, or WEBP image.</li>
+        <li>The image appears immediately in Live Preview below the form.</li>
+        <li>Change split mode, rows, and columns to see real-time preview updates.</li>
+        <li>Click Split Image when the preview looks correct.</li>
+        <li>Download all tiles in one ZIP, or select specific tiles and download selected ZIP.</li>
+      </ol>
+      <p class="muted-note">Downloads follow your browser settings. Most browsers save into the Downloads folder by default.</p>
+    </section>
+  </main>
+
+  <script>
+    const tileChecks = Array.from(document.querySelectorAll('.tile-check'));
+    const selectAllBtn = document.getElementById('selectAllBtn');
+    const clearAllBtn = document.getElementById('clearAllBtn');
+
+    if (selectAllBtn) {
+      selectAllBtn.addEventListener('click', () => {
+        tileChecks.forEach((input) => {
+          input.checked = true;
+        });
+      });
+    }
+
+    if (clearAllBtn) {
+      clearAllBtn.addEventListener('click', () => {
+        tileChecks.forEach((input) => {
+          input.checked = false;
+        });
+      });
+    }
+
+    const imageInput = document.getElementById('image');
+    const splitModeInput = document.getElementById('split_mode');
+    const rowsInput = document.getElementById('rows');
+    const colsInput = document.getElementById('cols');
+    const livePreview = document.getElementById('livePreview');
+    const livePreviewMeta = document.getElementById('livePreviewMeta');
+    const liveCanvas = document.getElementById('liveCanvas');
+    const liveLines = document.getElementById('liveLines');
+
+    const sourceImage = new Image();
+    sourceImage.decoding = 'async';
+    let hasSourceImage = false;
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function effectiveGrid() {
+      const splitMode = splitModeInput.value;
+      const requestedRows = clamp(Number.parseInt(rowsInput.value || '3', 10), 1, 10);
+      const requestedCols = clamp(Number.parseInt(colsInput.value || '3', 10), 1, 10);
+      const rows = splitMode === 'vertical' ? 1 : requestedRows;
+      const cols = splitMode === 'horizontal' ? 1 : requestedCols;
+      return { rows, cols, splitMode };
+    }
+
+    function addSplitLine(type, percent) {
+      const line = document.createElement('span');
+      line.className = type;
+      line.style.setProperty('--line-pos', String(percent));
+      liveLines.appendChild(line);
+    }
+
+    function drawSplitLines(rows, cols) {
+      liveLines.replaceChildren();
+
+      for (let c = 1; c < cols; c += 1) {
+        addSplitLine('line-v', (100 / cols) * c);
+      }
+
+      for (let r = 1; r < rows; r += 1) {
+        addSplitLine('line-h', (100 / rows) * r);
+      }
+    }
+
+    function drawPreview() {
+      if (!hasSourceImage) {
+        return;
+      }
+
+      const { rows, cols } = effectiveGrid();
+      const targetWidth = sourceImage.naturalWidth;
+      const targetHeight = sourceImage.naturalHeight;
+      const maxSide = 900;
+      const scale = Math.min(1, maxSide / Math.max(targetWidth, targetHeight));
+      const drawWidth = Math.max(1, Math.round(targetWidth * scale));
+      const drawHeight = Math.max(1, Math.round(targetHeight * scale));
+
+      liveCanvas.width = drawWidth;
+      liveCanvas.height = drawHeight;
+
+      const ctx = liveCanvas.getContext('2d');
+      if (!ctx) {
+        return;
+      }
+
+      ctx.clearRect(0, 0, drawWidth, drawHeight);
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = 'high';
+      ctx.filter = 'none';
+      ctx.drawImage(sourceImage, 0, 0, drawWidth, drawHeight);
+
+      drawSplitLines(rows, cols);
+      livePreviewMeta.textContent = `Rows ${rows}, Cols ${cols}`;
+    }
+
+    if (imageInput) {
+      imageInput.addEventListener('change', (event) => {
+        const file = event.target.files && event.target.files[0];
+        if (!file) {
+          hasSourceImage = false;
+          livePreview.hidden = true;
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          sourceImage.onload = () => {
+            hasSourceImage = true;
+            livePreview.hidden = false;
+            drawPreview();
+          };
+          sourceImage.src = String(reader.result);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    [splitModeInput, rowsInput, colsInput].forEach((control) => {
+      if (!control) {
+        return;
+      }
+
+      control.addEventListener('input', drawPreview);
+      control.addEventListener('change', drawPreview);
+    });
+  </script>
+</body>
+</html>

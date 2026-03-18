@@ -1,0 +1,42 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Test and tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+
+# IDE/editor
+.vscode/
+.idea/
+
+# Local app output
+runs/
+
+# Environment and confidential files
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.crt
+*.cer
+secrets.*
+
+# OS files
+.DS_Store
+Thumbs.db
