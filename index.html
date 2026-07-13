@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en" data-theme="splitter">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Split Instagram carousels and profile grids locally in your browser. No uploads, no added JPEG compression."
+    />
+    <meta name="theme-color" content="#f7f3e8" />
+    <title>IG Splitter — crisp carousels and grids</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="min-h-screen bg-base-100 text-base-content antialiased">
+    <header class="site-header">
+      <nav class="navbar mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
+        <a class="brand" href="#home" aria-label="IG Splitter home">
+          <span class="brand-mark" aria-hidden="true">
+            <i></i><i></i><i></i><i></i>
+          </span>
+          <span>IG SPLITTER</span>
+        </a>
+        <div class="ml-auto flex items-center gap-2">
+          <span class="privacy-pill hidden sm:inline-flex">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.6 2.9 8.8 7 10 4.1-1.2 7-5.4 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+            On-device
+          </span>
+          <a class="btn btn-ghost btn-sm rounded-full" href="./guide.html">Size & gap guide</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section id="home-view" class="home-view" data-view="home">
+        <div class="hero-orb hero-orb-one" aria-hidden="true"></div>
+        <div class="hero-orb hero-orb-two" aria-hidden="true"></div>
+        <div class="relative mx-auto max-w-7xl px-4 pb-16 pt-14 sm:px-6 sm:pb-24 sm:pt-20 lg:px-8">
+          <div class="mx-auto max-w-4xl text-center">
+            <div class="eyebrow mx-auto">Private by default · built for 2026</div>
+            <h1 class="hero-title mt-6">
+              Make the big picture<br />
+              <span class="marker-underline">land perfectly.</span>
+            </h1>
+            <p class="mx-auto mt-6 max-w-2xl text-lg leading-8 text-base-content/65 sm:text-xl">
+              Turn one image into a seamless carousel or a gap-aware profile grid. Your files never leave this device.
+            </p>
+          </div>
+
+          <div class="mx-auto mt-12 grid max-w-5xl gap-5 lg:grid-cols-2">
+            <button class="mode-card mode-card-carousel group" type="button" data-open-mode="carousel">
+              <div class="mode-card-copy">
+                <span class="mode-number">01</span>
+                <div>
+                  <p class="mode-kicker">Swipe, no seams</p>
+                  <h2>Carousel split</h2>
+                  <p>Slice a panorama into 2–10 consecutive feed slides. No profile-gap compensation.</p>
+                </div>
+                <span class="mode-cta">Start splitting <b aria-hidden="true">↗</b></span>
+              </div>
+              <div class="carousel-art" aria-hidden="true">
+                <div><span></span></div><div><span></span></div><div><span></span></div>
+              </div>
+            </button>
+
+            <button class="mode-card mode-card-grid group" type="button" data-open-mode="grid">
+              <div class="mode-card-copy">
+                <span class="mode-number">02</span>
+                <div>
+                  <p class="mode-kicker">Build the wall</p>
+                  <h2>Grid maker</h2>
+                  <p>Cut a mural into 3 × N posts with adjustable profile-grid gap compensation.</p>
+                </div>
+                <span class="mode-cta">Make a grid <b aria-hidden="true">↗</b></span>
+              </div>
+              <div class="grid-art" aria-hidden="true">
+                <i></i><i></i><i></i><i></i><i></i><i></i>
+              </div>
+            </button>
+          </div>
+
+          <div class="trust-row mx-auto mt-8 max-w-5xl">
+            <div><b>LOCAL</b><span>Nothing is uploaded</span></div>
+            <div><b>PNG</b><span>Lossless image export</span></div>
+            <div><b>1080</b><span>Instagram-ready width</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="tool-view" class="hidden pb-20 pt-10 sm:pt-14" data-view="tool">
+        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <button id="back-button" class="btn btn-ghost btn-sm -ml-3 gap-2 rounded-full" type="button">
+            <span aria-hidden="true">←</span> Choose another tool
+          </button>
+
+          <div class="mt-7 flex flex-col gap-5 border-b border-base-content/10 pb-8 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p id="tool-kicker" class="eyebrow"></p>
+              <h1 id="tool-title" class="mt-4 text-4xl font-black tracking-[-0.04em] sm:text-6xl"></h1>
+            </div>
+            <p id="tool-description" class="max-w-xl text-base leading-7 text-base-content/60 md:text-right"></p>
+          </div>
+
+          <div class="mt-8 grid gap-6 lg:grid-cols-[23rem_minmax(0,1fr)]">
+            <aside class="space-y-5">
+              <section class="panel p-5 sm:p-6" aria-labelledby="settings-title">
+                <div class="flex items-center justify-between">
+                  <h2 id="settings-title" class="panel-title">Split settings</h2>
+                  <span id="mode-badge" class="badge badge-outline rounded-full"></span>
+                </div>
+
+                <div id="carousel-settings" class="mt-5 space-y-5">
+                  <label class="form-control block">
+                    <span class="label-text field-label">Slide format</span>
+                    <select id="carousel-aspect" class="select select-bordered mt-2 w-full rounded-xl bg-white">
+                      <option value="0.8">Portrait · 4:5 · 1080 × 1350</option>
+                      <option value="1">Square · 1:1 · 1080 × 1080</option>
+                      <option value="0.75">Tall portrait · 3:4 · 1080 × 1440</option>
+                    </select>
+                  </label>
+                  <label class="form-control block">
+                    <span class="label-text field-label">Number of slides</span>
+                    <select id="carousel-count" class="select select-bordered mt-2 w-full rounded-xl bg-white">
+                      <option value="auto">Auto detect</option>
+                      <option value="2">2 slides</option><option value="3">3 slides</option>
+                      <option value="4">4 slides</option><option value="5">5 slides</option>
+                      <option value="6">6 slides</option><option value="7">7 slides</option>
+                      <option value="8">8 slides</option><option value="9">9 slides</option>
+                      <option value="10">10 slides</option>
+                    </select>
+                    <span class="field-help">Auto picks the closest full-slide crop, from 2 to 10.</span>
+                  </label>
+                </div>
+
+                <div id="grid-settings" class="mt-5 hidden space-y-5">
+                  <label class="form-control block">
+                    <span class="label-text field-label">Grid rows</span>
+                    <input id="grid-rows" class="input input-bordered mt-2 w-full rounded-xl bg-white" type="number" min="1" max="12" value="3" inputmode="numeric" />
+                    <span class="field-help">Always 3 columns. Three rows create 9 posts.</span>
+                  </label>
+                  <label class="form-control block">
+                    <span class="label-text field-label">Planning gap</span>
+                    <div class="join mt-2 w-full">
+                      <input id="grid-gap" class="input input-bordered join-item w-full bg-white" type="number" min="0" max="200" value="10" inputmode="numeric" />
+                      <span class="join-item flex items-center border border-base-300 bg-base-200 px-4 text-sm font-bold">px</span>
+                    </div>
+                    <span class="field-help">10 px is a starting point, not an official fixed Instagram value.</span>
+                  </label>
+                  <div class="size-calculator">
+                    <span>Ideal mural ratio</span>
+                    <strong id="grid-size">3125 × 4070 px</strong>
+                    <small>Other sizes are center-cropped to this shape.</small>
+                  </div>
+                  <a class="link-arrow" href="./guide.html#gap">How gap compensation works <span>→</span></a>
+                </div>
+              </section>
+
+              <section class="panel overflow-hidden">
+                <div id="dropzone" class="dropzone" role="button" tabindex="0" aria-controls="file-input">
+                  <input id="file-input" class="sr-only" type="file" accept="image/jpeg,image/png,image/webp" multiple />
+                  <span class="upload-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24"><path d="M12 16V4m0 0L7 9m5-5 5 5M5 14v5h14v-5"/></svg>
+                  </span>
+                  <div>
+                    <p class="font-bold">Drop images here</p>
+                    <p class="mt-1 text-sm text-base-content/55">or click to browse · JPG, PNG, WebP · max 30 MB each</p>
+                  </div>
+                </div>
+                <div id="file-queue" class="hidden border-t border-base-content/10 p-3"></div>
+              </section>
+
+              <div id="file-error" class="alert hidden rounded-2xl text-sm" role="alert"></div>
+
+              <button id="split-button" class="btn btn-primary h-14 w-full rounded-2xl text-base shadow-[0_8px_0_#211f1b] transition-transform hover:-translate-y-0.5 disabled:shadow-none" type="button" disabled>
+                <span id="split-label">Split images</span>
+                <span aria-hidden="true">↗</span>
+              </button>
+              <p class="flex items-center justify-center gap-2 text-center text-xs text-base-content/50">
+                <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3 5 6v5c0 4.6 2.9 8.8 7 10 4.1-1.2 7-5.4 7-10V6l-7-3Z"/></svg>
+                Processed entirely in this browser
+              </p>
+            </aside>
+
+            <section class="panel min-h-[34rem] p-5 sm:p-7" aria-labelledby="results-title">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p class="section-index">OUTPUT / PREVIEW</p>
+                  <h2 id="results-title" class="panel-title mt-1">Your split images</h2>
+                </div>
+                <button id="download-all" class="btn btn-neutral btn-sm hidden rounded-full px-5" type="button">
+                  Download all .zip
+                </button>
+              </div>
+
+              <div id="empty-results" class="empty-results">
+                <div class="empty-tiles" aria-hidden="true"><i></i><i></i><i></i></div>
+                <h3>Ready when you are.</h3>
+                <p>Add an image, choose your settings, and the split preview will appear here.</p>
+              </div>
+              <div id="processing" class="hidden py-28 text-center" aria-live="polite">
+                <span class="loading loading-spinner loading-lg text-primary"></span>
+                <p id="processing-label" class="mt-4 font-bold">Splitting locally…</p>
+              </div>
+              <div id="results" class="mt-7 hidden space-y-10"></div>
+              <p id="status" class="sr-only" aria-live="polite"></p>
+            </section>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="border-t border-base-content/10 bg-base-200/50">
+      <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 text-sm text-base-content/55 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+        <p><b class="text-base-content">IG Splitter</b> · Static, private, open-web image tooling.</p>
+        <p>Not affiliated with Instagram or Meta. <a class="link" href="./guide.html">Read the sizing guide</a>.</p>
+      </div>
+    </footer>
+
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

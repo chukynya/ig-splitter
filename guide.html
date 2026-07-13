@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en" data-theme="splitter">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A practical guide to Instagram feed image sizes, profile grid crops, visual gaps, and high-quality exports."
+    />
+    <meta name="theme-color" content="#f7f3e8" />
+    <title>Instagram size & gap guide — IG Splitter</title>
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body class="min-h-screen bg-base-100 text-base-content antialiased">
+    <header class="site-header">
+      <nav class="navbar mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Main navigation">
+        <a class="brand" href="./index.html#home" aria-label="IG Splitter home">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <span>IG SPLITTER</span>
+        </a>
+        <div class="ml-auto flex items-center gap-2">
+          <span class="privacy-pill hidden sm:inline-flex">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 5 6v5c0 4.6 2.9 8.8 7 10 4.1-1.2 7-5.4 7-10V6l-7-3Z"/><path d="m9 12 2 2 4-4"/></svg>
+            On-device
+          </span>
+          <a class="btn btn-primary btn-sm rounded-full px-5" href="./index.html#grid">Open grid maker</a>
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <section class="guide-hero">
+        <div class="hero-orb hero-orb-one" aria-hidden="true"></div>
+        <div class="hero-orb hero-orb-two" aria-hidden="true"></div>
+        <div class="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+          <p class="eyebrow">SIZING GUIDE / CHECKED 13 JULY 2026</p>
+          <div class="mt-7 grid items-end gap-10 lg:grid-cols-[1fr_0.68fr]">
+            <div>
+              <h1 class="guide-title">Sizing, without the folklore.</h1>
+              <p class="mt-7 max-w-2xl text-lg leading-8 text-base-content/65">
+                Feed dimensions, profile crops, gap compensation, and what “no quality loss” can honestly mean.
+              </p>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div class="fact-card"><b>1080 px</b><span>Official maximum preserved width</span></div>
+              <div class="fact-card"><b>1.91:1–3:4</b><span>Official supported photo range</span></div>
+              <div class="fact-card"><b>4:5</b><span>Tool’s feed-first default</span></div>
+              <div class="fact-card"><b>PNG</b><span>Tool’s lossless export format</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <section id="official" class="guide-section scroll-mt-24">
+          <div>
+            <p class="section-index">01 / OFFICIAL</p>
+            <h2 class="mt-4">What Instagram actually publishes.</h2>
+          </div>
+          <div class="guide-copy">
+            <p>
+              Meta’s Instagram Help Centre says shared photos are uploaded at the best available resolution up to a width of <strong>1080 px</strong>. A photo between 320 and 1080 px wide is kept at its original resolution when its aspect ratio is between <strong>1.91:1 and 3:4</strong>. Unsupported ratios can be cropped.
+            </p>
+            <p>
+              To target the maximum documented width, Meta advises using the latest Instagram app, uploading an image at least 1080 px wide within that ratio range, and using a device with a high-quality camera.
+            </p>
+            <div class="guide-callout">
+              <strong>Primary source</strong><br />
+              <a class="link font-bold" href="https://www.facebook.com/help/1631821640426723/" target="_blank" rel="noreferrer">Instagram Help Centre — Image resolution of photos you share on Instagram ↗</a>
+            </div>
+            <p class="text-sm">
+              The often-repeated “30 MB maximum” is not stated on that public photo-resolution page. IG Splitter uses 30 MB only as a browser-memory guardrail for each source file; it is not presented as an official Instagram upload limit.
+            </p>
+          </div>
+        </section>
+
+        <section id="sizes" class="guide-section scroll-mt-24">
+          <div>
+            <p class="section-index">02 / PRACTICAL SIZES</p>
+            <h2 class="mt-4">Choose the surface, then the ratio.</h2>
+          </div>
+          <div class="guide-copy">
+            <p>
+              “Supported” and “recommended” are different. The 4:5 portrait is a practical feed-first default because it uses substantial vertical space while staying inside Meta’s documented range. A 3:4 image is taller and also falls on the documented portrait boundary.
+            </p>
+            <table class="spec-table">
+              <thead><tr><th>Use</th><th>Pixels</th><th>Ratio</th><th>Tool behavior</th></tr></thead>
+              <tbody>
+                <tr><td><strong>Portrait feed / carousel</strong></td><td>1080 × 1350</td><td>4:5</td><td>Default</td></tr>
+                <tr><td><strong>Tall portrait</strong></td><td>1080 × 1440</td><td>3:4</td><td>Carousel option</td></tr>
+                <tr><td><strong>Square</strong></td><td>1080 × 1080</td><td>1:1</td><td>Carousel option</td></tr>
+                <tr><td><strong>Wide landscape</strong></td><td>1080 × 566</td><td>≈1.91:1</td><td>Official range edge</td></tr>
+              </tbody>
+            </table>
+            <h3>Carousel rule</h3>
+            <p>
+              Keep every carousel slide at the same ratio. IG Splitter center-crops the source once, then takes adjacent slices from that crop. It adds <strong>no artificial gap</strong> between slides, so the right edge of one slide continues directly into the left edge of the next.
+            </p>
+          </div>
+        </section>
+
+        <section id="gap" class="guide-section scroll-mt-24">
+          <div>
+            <p class="section-index">03 / PROFILE GAP</p>
+            <h2 class="mt-4">The gap is UI, not image data.</h2>
+          </div>
+          <div class="guide-copy">
+            <div class="guide-callout">
+              <strong>There is no fixed official gap-width specification.</strong><br />
+              Meta’s public image-resolution guidance does not publish a profile-grid gap in pixels. The rendered space can vary with device, viewport, app version, and interface changes.
+            </div>
+            <p>
+              A seamless mural can look slightly stretched when the app inserts space between adjacent thumbnails. Gap compensation skips a matching sliver of source artwork at every tile boundary. The screen gap then occupies the place of that skipped artwork.
+            </p>
+            <h3>Why the tool starts at 10 px</h3>
+            <p>
+              Ten design pixels relative to a 1350 px-tall post is a practical starting point inspired by the <a class="link font-bold" href="https://github.com/joshmoritty/ig-split" target="_blank" rel="noreferrer">referenced IG Split workflow</a>. It is deliberately editable. Enter <strong>0</strong> to disable compensation.
+            </p>
+            <h3>Calibrate for your own screen</h3>
+            <ol class="list-decimal space-y-2 pl-5">
+              <li>Take a screenshot of your profile grid.</li>
+              <li>Measure one tile’s displayed height and the gap beside it.</li>
+              <li>Convert that measurement to the 1350 px design scale.</li>
+            </ol>
+            <div class="formula">design gap = round(screen gap ÷ screen tile height × 1350)</div>
+            <p>
+              Example: a 3 px screen gap beside a 405 px-tall tile becomes <strong>10 design px</strong> (3 ÷ 405 × 1350).
+            </p>
+            <h3>Grid Maker’s planning model</h3>
+            <p>
+              The preview uses a centered 3:4 window inside each 1080 × 1350 post. With three columns, the profile-safe width at this scale is 1012.5 px. For <em>g</em> gap pixels and <em>r</em> rows:
+            </p>
+            <div class="formula">width = 1080 + 2 × (1012.5 + g)<br />height = r × 1350 + (r − 1) × g</div>
+            <p>
+              The source can be larger or smaller than that calculated canvas; the tool center-crops it to the same proportion and exports every final post at 1080 × 1350.
+            </p>
+          </div>
+        </section>
+
+        <section id="quality" class="guide-section scroll-mt-24">
+          <div>
+            <p class="section-index">04 / QUALITY</p>
+            <h2 class="mt-4">Lossless here. Instagram is separate.</h2>
+          </div>
+          <div class="guide-copy">
+            <p>
+              All processing happens with the browser’s Canvas API on this device. IG Splitter exports PNG, so downloading a tile does not add JPEG compression artifacts. ZIP downloads store those same PNG bytes unchanged.
+            </p>
+            <p>
+              If a source crop is not already 1080 px wide, it must be resized to the output dimensions. High-quality browser resampling is used, but resizing cannot invent missing detail. For the crispest result, start with enough source resolution for every tile.
+            </p>
+            <div class="guide-callout">
+              <strong>Important limit</strong><br />
+              Instagram may still resize, crop, or recompress an image after upload. No independent static tool can guarantee the pixels Instagram ultimately serves.
+            </div>
+            <h3>Posting order for a profile mural</h3>
+            <p>
+              Downloaded grid files are numbered for posting: <strong>01 is the bottom-right tile</strong>, then move right-to-left and bottom-to-top. Upload 01 first. Once every file is posted, the highest number sits at the top-left of the finished mural.
+            </p>
+            <a class="btn btn-primary rounded-full px-7" href="./index.html#grid">Make a grid now <span aria-hidden="true">↗</span></a>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="bg-neutral text-neutral-content">
+      <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-10 text-sm text-neutral-content/60 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
+        <p><b class="text-neutral-content">IG Splitter</b> · Your images stay on your device.</p>
+        <p>Not affiliated with Instagram or Meta. Guidance checked 13 July 2026.</p>
+      </div>
+    </footer>
+  </body>
+</html>

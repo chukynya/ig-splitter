@@ -1,175 +1,42 @@
-# Instagram Splitter (Local Fullstack Python App)
+# IG Splitter
 
-Upload an image in your browser, split it into tiles, and download tiles for Instagram posting.
+A fully static, browser-only Instagram carousel splitter and profile grid maker.
 
-## Features
+## What it does
 
-- Upload image from browser
-- Split mode: both (grid), vertical, or horizontal
-- Split line preview and tile gallery
-- Download all tiles as one ZIP
-- Select specific tiles and download selected ZIP
-- Optional separate file download links per tile
-- Quality-preserving split flow (no upscale/resize interpolation)
-- Tiles exported as PNG to minimize compression artifacts
+- Splits a panorama into 2–10 adjacent carousel slides.
+- Splits a mural into a 3 × N profile grid with configurable gap compensation.
+- Accepts JPG, PNG, and WebP by file picker or drag and drop.
+- Exports lossless PNG files individually or in a ZIP.
+- Keeps every source and generated image on the visitor's device.
+- Includes a sourced guide separating official Instagram limits from practical grid assumptions.
 
-## Clean Architecture (Refactor)
+## Stack
 
-Project is now organized so developers can extend features safely:
+- TypeScript
+- Vite
+- Tailwind CSS 4
+- daisyUI 5
+- fflate for client-side ZIP packaging
 
-- app.py: minimal entrypoint
-- ig_splitter/config.py: constants and app limits
-- ig_splitter/models.py: request/result data models
-- ig_splitter/services/image_service.py: splitting and grid logic
-- ig_splitter/services/storage_service.py: file persistence and ZIP utilities
-- ig_splitter/web/routes.py: Flask routes and request validation
-- templates/index.html: UI and interaction flow
-- static/style.css: styling and responsive behavior
+There is no server, database, upload endpoint, React runtime, or analytics script.
 
-## Prerequisites
+## Run locally
 
-Before running locally, install:
-
-- Python 3.10 or newer (recommended: Python 3.11+)
-- pip (comes with Python)
-- A terminal (PowerShell on Windows is fine)
-
-Optional but recommended:
-
-- VS Code with Python extension
-- Git (for cloning and version control)
-
-Check versions:
-
-```powershell
-python --version
-pip --version
+```bash
+npm install
+npm run dev
 ```
 
-If `python` is not recognized on Windows, try:
+## Verify and build
 
-```powershell
-py --version
+```bash
+npm test
+npm run build
 ```
 
-## Project Setup (First Time)
+The deployable static site is generated in `dist/`.
 
-1. Go to the project folder:
+## Image-quality boundary
 
-```powershell
-cd c:\Users\henry\Desktop\selflearn\python\ig-splitter
-```
-
-2. Create virtual environment:
-
-```powershell
-python -m venv .venv
-```
-
-3. Activate virtual environment:
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-If PowerShell blocks activation, run this once in PowerShell (CurrentUser scope):
-
-```powershell
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
-4. Install dependencies:
-
-```powershell
-pip install -r requirements.txt
-```
-
-## How To Run Locally
-
-1. Make sure virtual environment is activated.
-2. Start the app:
-
-```powershell
-python app.py
-```
-
-3. Open browser:
-
-- http://127.0.0.1:5000
-
-4. Use the app:
-
-- Upload image
-- Choose split mode and grid values
-- Process image
-- Download all tiles as ZIP or download needed tiles
-
-## Run Without Web UI (CLI)
-
-You can run this project fully from terminal/prompt mode:
-
-```powershell
-python -m ig_splitter.cli --input "C:/path/image.jpg" --rows 3 --cols 3 --split-mode both --download-mode zip
-```
-
-Examples:
-
-```powershell
-python -m ig_splitter.cli --input "C:/path/image.jpg" --split-mode vertical --cols 4 --download-mode zip
-python -m ig_splitter.cli --input "C:/path/image.jpg" --split-mode horizontal --rows 5 --download-mode nozip
-```
-
-Outputs are generated in `runs/<run_id>/`.
-
-## Agent Skill File
-
-Non-web execution skill for agent workflows is available at:
-
-- `.github/skills/ig-splitter-non-web/SKILL.md`
-
-## Run Tests
-
-After activating `.venv`, run:
-
-```powershell
-python -m pytest -q
-```
-
-Test coverage includes unit tests for service/helper functions and integration/regression tests for upload, split modes, and download flows.
-
-## Guidelines To Run Python For This Project
-
-- Always run inside virtual environment (`.venv`) so dependency versions stay stable.
-- Use `python -m pip install ...` if `pip` command points to wrong Python.
-- Keep dependencies in `requirements.txt` updated when adding packages.
-- Avoid running with global Python packages for project work.
-- Use clear terminal output and stop the server with `Ctrl + C`.
-- Keep route handlers thin; put business logic in `ig_splitter/services`.
-- Add constants to `ig_splitter/config.py` instead of hardcoding values.
-- Prefer typed dataclasses in `ig_splitter/models.py` for data passed to templates.
-
-Recommended commands:
-
-```powershell
-python -m pip install -r requirements.txt
-python app.py
-```
-
-## Troubleshooting
-
-- Port already in use:
-	- Stop other process using port 5000 or run with another port by editing app startup.
-- Module not found:
-	- Activate `.venv`, then reinstall requirements.
-- Pillow install problems:
-	- Upgrade pip first: `python -m pip install --upgrade pip`
-- Browser not opening:
-	- Copy and paste URL manually into browser.
-
-## Notes
-
-- Supported image formats: PNG, JPG, JPEG, WEBP
-- Split tiles are exported as PNG for better quality retention
-- Upload size is not limited by app config
-- ZIP downloads store files without deflate compression
-- Generated output is saved in `runs/`
+The splitter uses high-quality Canvas resampling and exports PNG to avoid an added lossy JPEG generation. Input that does not match the selected target shape is center-cropped and resized to the selected 1080 px-wide output. Instagram can still crop, resize, or recompress files after upload.
