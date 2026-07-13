@@ -6,9 +6,6 @@ import {
   gridPlan,
 } from "./geometry.ts";
 
-const closeTo = (actual: number, expected: number) =>
-  assert.ok(Math.abs(actual - expected) < 0.001, `${actual} != ${expected}`);
-
 test("a 3240x1350 panorama becomes three exact 4:5 slides", () => {
   const plan = carouselPlan(3240, 1350, 4 / 5, "auto");
 
@@ -34,18 +31,31 @@ test("grid planning leaves the chosen design gap and reverses upload order", () 
   assert.deepEqual(design, {
     rows: 3,
     gap: 10,
-    width: 3125,
-    height: 4070,
+    width: 3130,
+    height: 4080,
   });
 
-  const plan = gridPlan(3125, 4070, 3, 10);
+  const plan = gridPlan(3240, 4050, 3, 10);
   assert.equal(plan.slices.length, 9);
   assert.deepEqual(
     plan.slices.map(({ postOrder }) => postOrder),
     [9, 8, 7, 6, 5, 4, 3, 2, 1],
   );
-  closeTo(plan.slices[1].x, 1022.5);
-  closeTo(plan.slices[3].y, 1360);
-  closeTo(plan.slices[8].x, 2045);
-  closeTo(plan.slices[8].y, 2720);
+  assert.ok(
+    plan.slices.every(
+      ({ width, height, outputWidth, outputHeight }) =>
+        width === 1072 &&
+        height === 1340 &&
+        outputWidth === 1072 &&
+        outputHeight === 1340,
+    ),
+  );
+  assert.deepEqual(
+    [0, 1, 2].map((column) => plan.slices[column].x),
+    [66, 1083, 2100],
+  );
+  assert.deepEqual(
+    [0, 1, 2].map((row) => plan.slices[row * 3].y),
+    [10, 1360, 2710],
+  );
 });

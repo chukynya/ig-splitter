@@ -1,6 +1,6 @@
 export const OUTPUT_WIDTH = 1080;
 export const FEED_HEIGHT = 1350;
-export const PROFILE_PREVIEW_WIDTH = 1012.5;
+export const PROFILE_PREVIEW_WIDTH = 1015;
 export const GRID_COLUMNS = 3;
 
 export type Rect = {
@@ -98,7 +98,7 @@ export function gridDesignSize(rows: number, gap: number) {
     width:
       OUTPUT_WIDTH +
       (GRID_COLUMNS - 1) * (PROFILE_PREVIEW_WIDTH + safeGap),
-    height: safeRows * FEED_HEIGHT + (safeRows - 1) * safeGap,
+    height: safeRows * (FEED_HEIGHT + safeGap),
   };
 }
 
@@ -109,13 +109,46 @@ export function gridPlan(
   gap: number,
 ): GridPlan {
   const design = gridDesignSize(rows, gap);
-  const crop = coverCrop(
-    sourceWidth,
-    sourceHeight,
-    design.width / design.height,
+  const rowAspect = design.width / (FEED_HEIGHT + design.gap);
+  const heightFromWidth = sourceWidth / rowAspect;
+  const rowHeight =
+    heightFromWidth * design.rows > sourceHeight
+      ? Math.floor(sourceHeight / design.rows)
+      : Math.round(heightFromWidth);
+
+  if (rowHeight < 1) {
+    throw new RangeError("Image is too short for the selected number of rows.");
+  }
+
+  const rowWidth = rowHeight * rowAspect;
+  const cropX =
+    heightFromWidth * design.rows > sourceHeight
+      ? Math.floor((sourceWidth - rowWidth) / 2)
+      : 0;
+  const gapWidth = Math.round(
+    (design.gap / (FEED_HEIGHT + design.gap)) * rowHeight,
   );
-  const scaleX = crop.width / design.width;
-  const scaleY = crop.height / design.height;
+  const cutoffWidth = Math.round(
+    ((OUTPUT_WIDTH - PROFILE_PREVIEW_WIDTH) /
+      (FEED_HEIGHT + design.gap)) *
+      rowHeight,
+  );
+  const outputWidth = Math.round(
+    (OUTPUT_WIDTH / (FEED_HEIGHT + design.gap)) * rowHeight,
+  );
+  const outputHeight = rowHeight - gapWidth;
+  const cropY = sourceHeight - rowHeight * design.rows + gapWidth;
+
+  if (outputWidth < 1 || outputHeight < 1) {
+    throw new RangeError("Image is too small for the selected gap and rows.");
+  }
+
+  const crop = {
+    x: cropX,
+    y: cropY - gapWidth,
+    width: rowWidth,
+    height: rowHeight * design.rows,
+  };
   const slices: SlicePlan[] = [];
 
   for (let row = 0; row < design.rows; row += 1) {
@@ -123,15 +156,15 @@ export function gridPlan(
       const index = row * GRID_COLUMNS + column;
       slices.push({
         x:
-          crop.x +
-          column * (PROFILE_PREVIEW_WIDTH + design.gap) * scaleX,
-        y: crop.y + row * (FEED_HEIGHT + design.gap) * scaleY,
-        width: OUTPUT_WIDTH * scaleX,
-        height: FEED_HEIGHT * scaleY,
+          cropX +
+          column * (outputWidth + gapWidth - cutoffWidth),
+        y: cropY + row * (outputHeight + gapWidth),
+        width: outputWidth,
+        height: outputHeight,
         index,
         postOrder: design.rows * GRID_COLUMNS - index,
-        outputWidth: OUTPUT_WIDTH,
-        outputHeight: FEED_HEIGHT,
+        outputWidth,
+        outputHeight,
       });
     }
   }

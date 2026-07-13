@@ -114,7 +114,7 @@
             </p>
             <h3>Why the tool starts at 10 px</h3>
             <p>
-              Ten design pixels relative to a 1350 px-tall post is a practical starting point inspired by the <a class="link font-bold" href="https://github.com/joshmoritty/ig-split" target="_blank" rel="noreferrer">referenced IG Split workflow</a>. It is deliberately editable. Enter <strong>0</strong> to disable compensation.
+              Ten design pixels relative to a 1350 px-tall post is a practical starting point from the <a class="link font-bold" href="https://github.com/joshmoritty/ig-split" target="_blank" rel="noreferrer">referenced IG Split workflow</a>. Grid Maker now follows that workflow’s same 1015 px preview estimate and source-derived output size. Enter <strong>0</strong> to disable compensation.
             </p>
             <h3>Calibrate for your own screen</h3>
             <ol class="list-decimal space-y-2 pl-5">
@@ -128,11 +128,11 @@
             </p>
             <h3>Grid Maker’s planning model</h3>
             <p>
-              The preview uses a centered 3:4 window inside each 1080 × 1350 post. With three columns, the profile-safe width at this scale is 1012.5 px. For <em>g</em> gap pixels and <em>r</em> rows:
+              The reference workflow estimates the centered profile preview as 1015 px wide inside each 1080 × 1350 design unit. For <em>g</em> gap pixels and <em>r</em> rows:
             </p>
-            <div class="formula">width = 1080 + 2 × (1012.5 + g)<br />height = r × 1350 + (r − 1) × g</div>
+            <div class="formula">width = 1080 + 2 × (1015 + g)<br />height = r × (1350 + g)</div>
             <p>
-              The source can be larger or smaller than that calculated canvas; the tool center-crops it to the same proportion and exports every final post at 1080 × 1350.
+              The source can differ from that ideal canvas. Grid Maker uses the available source height or width, center-crops horizontally when needed, removes the planned gaps, and keeps the resulting 4:5 slices at their source-derived size. A 3240 × 4050 source with three rows and a 10 px gap therefore produces nine 1072 × 1340 files without upscaling.
             </p>
           </div>
         </section>
@@ -147,7 +147,7 @@
               All processing happens with the browser’s Canvas API on this device. IG Splitter exports PNG, so downloading a tile does not add JPEG compression artifacts. ZIP downloads store those same PNG bytes unchanged.
             </p>
             <p>
-              If a source crop is not already 1080 px wide, it must be resized to the output dimensions. High-quality browser resampling is used, but resizing cannot invent missing detail. For the crispest result, start with enough source resolution for every tile.
+              Carousel output is resized to its selected 1080 px-wide format. Grid Maker instead preserves its source-derived slice dimensions, avoiding an unnecessary upscale. For the crispest result in either mode, start with enough source resolution for every tile.
             </p>
             <div class="guide-callout">
               <strong>Important limit</strong><br />

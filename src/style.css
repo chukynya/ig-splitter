@@ -640,7 +640,7 @@ select {
 }
 
 .grid-preview .result-tile {
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 1015 / 1350;
 }
 
 .carousel-preview .result-tile {

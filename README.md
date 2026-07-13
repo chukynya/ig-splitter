@@ -39,4 +39,4 @@ The deployable static site is generated in `dist/`.
 
 ## Image-quality boundary
 
-The splitter uses high-quality Canvas resampling and exports PNG to avoid an added lossy JPEG generation. Input that does not match the selected target shape is center-cropped and resized to the selected 1080 px-wide output. Instagram can still crop, resize, or recompress files after upload.
+The splitter exports PNG to avoid an added lossy JPEG generation. Carousel images use high-quality Canvas resampling to the selected 1080 px-wide format. Grid images follow the reference gap geometry and preserve their source-derived 4:5 slice size instead of upscaling. Instagram can still crop, resize, or recompress files after upload.

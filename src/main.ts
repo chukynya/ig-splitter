@@ -272,7 +272,7 @@ function renderResults() {
     note.className = "output-note";
     note.textContent =
       mode === "grid"
-        ? "Preview uses the centered 3:4 profile crop. Files are full 1080 × 1350 posts; upload 01 first."
+        ? `Preview uses the centered profile crop. Files are ${group.results[0]?.width} × ${group.results[0]?.height} 4:5 posts; upload 01 first.`
         : "Shown left to right. Upload slide 01, then 02, and continue in order.";
     section.append(header, preview, note);
     resultsElement.append(section);
